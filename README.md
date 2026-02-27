@@ -1,2 +1,38 @@
-# Protein_family_classification
-Predicting protein domain families from protein sequence information.
+# Protein Family Classification using Dipeptide Composition
+
+## 概要 (Overview)
+本プロジェクトは、タンパク質のアミノ酸配列データから「ジペプチド（2残基のアミノ酸の組み合わせ）」の出現頻度を特徴量として抽出し、多層パーセプトロン（MLP: Multi-Layer Perceptron）を用いたニューラルネットワークによってタンパク質ファミリーを分類する機械学習モデルです。
+
+新規の未知配列に対しても、学習済みモデルを用いて高速かつ高精度にファミリー予測を行うことができます。
+
+## 主な特徴 (Features)
+1. **配列からの自動特徴量抽出 (Feature Engineering)**
+   - 27種類のアミノ酸記号の直積（729通りの組み合わせ）を生成し、各配列におけるジペプチドの出現頻度を自動計算してベクトル化します。
+   - `calculate_dipeptide_composition` 関数としてモジュール化しており、任意のサイズのデータセットに再利用可能です。
+   
+
+2. **機械学習のベストプラクティスに則った前処理**
+   - ニューラルネットワークの学習効率と精度を向上させるため、`StandardScaler` を用いたデータの標準化（スケーリング）を実装しています。
+   - データリーク（未知データの情報が学習に混入すること）を防ぐため、スケーラーの `fit` は学習データのみで行い、テストデータおよび新規推論データには `transform` のみを適用する堅牢な設計としています。
+
+3. **高い再現性 (Reproducibility)**
+   - データの分割（`train_test_split`）およびモデルの初期化において `random_state` を固定し、科学的な検証における再現性を担保しています。
+
+## 実行環境 (Requirements)
+本コードを実行するには、以下のPythonライブラリが必要です。
+
+- numpy
+- pandas
+- scikit-learn
+
+## ファイル構成 (File Structure)
+- `protein_classifier.py` : 特徴量抽出からモデルの学習、評価、新規データの推論までを行うメインスクリプト。
+- `input_file.csv` : 学習およびテスト用の元データ（※タブ区切り。1列目に正解ラベル、4列目に配列データを含む想定）。
+- `file_2.csv` : 推論用の新規データ（※カンマ区切り。2列目に配列データを含む想定）。
+
+## 実行方法 (Usage)
+1. リポジトリをクローンまたはダウンロードし、作業ディレクトリに移動します。
+2. 必要なライブラリがインストールされた環境で、以下のコマンドを実行します。
+
+```bash
+python protein_domain_family_classification.py
